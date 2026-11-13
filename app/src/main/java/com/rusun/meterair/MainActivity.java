@@ -45,7 +45,6 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         
-        // Ensure touch focus for native dropdown selects
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
         webView.setBackgroundColor(Color.WHITE);
@@ -62,20 +61,22 @@ public class MainActivity extends Activity {
                     fileCallback.onReceiveValue(null);
                 }
                 fileCallback = callback;
-                Intent intent = params.createIntent();
+                
+                Intent intent;
+                try {
+                    intent = params.createIntent();
+                } catch (Exception e) {
+                    intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                }
+
                 try {
                     startActivityForResult(intent, FILE_CHOOSER);
                 } catch (Exception e) {
-                    try {
-                        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                        i.addCategory(Intent.CATEGORY_OPENABLE);
-                        i.setType("image/*");
-                        startActivityForResult(i, FILE_CHOOSER);
-                    } catch (Exception ex) {
-                        fileCallback = null;
-                        Toast.makeText(MainActivity.this, "Tidak dapat membuka kamera/galeri", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
+                    fileCallback = null;
+                    Toast.makeText(MainActivity.this, "Gagal membuka kamera/galeri", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
                 return true;
             }
@@ -103,6 +104,9 @@ public class MainActivity extends Activity {
                 }
             }
             fileCallback.onReceiveValue(results);
+            fileCallback = null;
+        } else if (fileCallback != null) {
+            fileCallback.onReceiveValue(null);
             fileCallback = null;
         }
     }
