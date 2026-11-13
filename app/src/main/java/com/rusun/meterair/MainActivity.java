@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         
-        // Memastikan interaksi sentuh dan dropdown responsif
+        // Ensure touch focus for native dropdown selects
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
         webView.setBackgroundColor(Color.WHITE);
