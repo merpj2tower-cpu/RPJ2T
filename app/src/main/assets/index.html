@@ -156,17 +156,14 @@ $('historyBody').addEventListener('click',e=>{
   if(id&&confirm('Hapus catatan ini?')){ records=records.filter(r=>r.id!==id); saveRecords(); render(); }
 });
 
-// BULLETPROOF EXCEL/CSV EXPORT
 function exportData(){
   const btn=$('exportBtn');
   btn.disabled=true; btn.textContent='Menyiapkan File…';
   try {
-    let csv = '﻿Tanggal,Tower,Lantai,Unit,Kode Lokasi,Angka Meter (m3),Pemakaian (m3),Catatan
-';
+    let csv = '\uFEFFTanggal,Tower,Lantai,Unit,Kode Lokasi,Angka Meter (m3),Pemakaian (m3),Catatan\n';
     sorted().forEach(r=>{
       let u = usageFor(r);
-      csv += `"${r.date}","${r.tower}","${r.floor}","${r.unit}","${locationKey(r)}","${r.reading}","${u===null?'':u}","${(r.notes||'').replace(/"/g,'""')}"
-`;
+      csv += `"${r.date}","${r.tower}","${r.floor}","${r.unit}","${locationKey(r)}","${r.reading}","${u===null?'':u}","${(r.notes||'').replace(/"/g,'""')}"\n`;
     });
     const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
